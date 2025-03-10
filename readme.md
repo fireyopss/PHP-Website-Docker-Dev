@@ -12,15 +12,16 @@ The setup is structured to allow easy communication between the two services and
 ## Directory Structure
 
 ```bash
-.docker/
-├── dev/
-│   ├── frontend/
-│   │   ├── Dockerfile       # Nginx configuration to serve PHP
-│   │   ├── app.conf         # Nginx FastCGI configuration
-│   ├── backend/
-│   │   └── Dockerfile       # PHP-FPM setup
-├── docker-compose.yml       # Docker Compose configuration
-
+├── .docker/
+│   ├── dev/
+│   │   ├── frontend/
+│   │   │   ├── Dockerfile       # Nginx configuration to serve PHP
+│   │   │   ├── app.conf         # Nginx FastCGI configuration
+│   │   ├── backend/
+│   │   │   └── Dockerfile       # PHP-FPM setup
+│   ├── docker-compose.yml       # Docker Compose configuration
+├── src/
+│   └── index.php                # PHP file served by Nginx
 
 # Docker PHP Project Setup
 
