@@ -1,0 +1,40 @@
+
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./.docker/dev/frontend/Dockerfile
+    volumes:
+      - ./src:/var/www
+    
+    restart: unless-stopped
+    working_dir: /var/www
+    networks:
+      - dockerphp
+    
+    ports:
+      - "8023:80"
+    image: tayyab7891/fireyopssphp:frontend
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./.docker/dev/backend/Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./src:/var/www
+    networks:
+      - dockerphp
+      
+    image: tayyab7891/fireyopssphp:backend
+
+
+networks:
+  dockerphp:
+    driver: bridge
+
+
+
+  
