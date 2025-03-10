@@ -112,14 +112,18 @@ Example:
 ```nginx
 server {
     listen 80;
-    root /var/www/html;
+    server_name _;
+    root /var/www/;
     index index.php;
 
-    location ~ \.php$ {
-        fastcgi_pass backend:9000;  # Pass requests to backend
+     location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass backend:9000;
         fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
     }
 }
 ```
@@ -129,10 +133,12 @@ A simple PHP-FPM setup for serving PHP files.
 
 Example:
 ```dockerfile
-FROM php:7.4-fpm
+FROM       php:8.2-fpm
+WORKDIR /var/www
 
-# Install PHP extensions and dependencies
-RUN docker-php-ext-install pdo pdo_mysql
+USER    1000
+EXPOSE  9000
+CMD     ["php-fpm"]
 ```
 
 ### frontend/Dockerfile
@@ -140,14 +146,8 @@ Nginx setup for serving PHP files.
 
 Example:
 ```dockerfile
-FROM nginx:alpine
-
-# Copy the Nginx configuration file
-COPY app.conf /etc/nginx/conf.d/default.conf
-COPY ./src /var/www/html
-
-# Expose port 80 for the frontend service
-EXPOSE 80
+FROM    nginx:alpine
+COPY    .docker/dev/frontend/app.conf   /etc/nginx/conf.d/default.conf
 ```
 
 ## Running the Application
@@ -160,3 +160,6 @@ docker-compose up
 
 ## Conclusion
 This setup provides a clean, modular approach for testing Docker deployments with multiple services in Docker Swarm, Kubernetes, or Nomad. It uses Nginx as a reverse proxy to serve PHP via PHP-FPM, with easy communication between frontend and backend services using Docker networking.
+
+## Note!
+Inside docker-compose.yml you will need to change image to point to your own dockerhub or private repository, otherwise you may remove it completely if you do not intend to push any images.
